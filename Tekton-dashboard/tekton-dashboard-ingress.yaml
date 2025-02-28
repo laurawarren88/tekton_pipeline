@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+spec:
+  rules:
+    - host: tekton.dev.clusters.easlab.co.uk
+      http:
+        paths:
+          - backend:
+              service:
+                name: tekton-dashboard
+                port:
+                  number: 9097
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - tekton.dev.clusters.easlab.co.uk
+      secretName: tekton-dashboard-lmw-tls

@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: clone-build-push-pipeline
+  namespace: lmwprac
+spec:
+  description: |
+    This pipeline clones a git repo, builds a Docker image with Kaniko and
+    pushes it to a registry   
+  params:
+    - name: github-clone-url
+      type: string
+      description: "The URL of the Git repository"
+    - name: IMAGE
+      type: string
+      description: "The container registry where the image will be pushed"
+    - name: DOCKERFILE
+      type: string
+      description: "Path to the Dockerfile to build. Defaults to ./Dockerfile"
+    - name: CONTEXT
+      type: string
+      description: "The build context used by Kaniko. Defaults to /workspace/source"
+    - name: MANIFEST_PATH
+      type: string
+      description: "Path to the Kubernetes manifest file"
+    - name: YAML_PATH_TO_IMAGE
+      type: string
+      description: "Path to the image field in the manifest"
+    - name: ACTION
+      type: string
+      description: "kubectl action (apply/delete)"
+  workspaces:
+    - name: git-credentials
+    - name: source
+    - name: docker-config
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+        kind: Task
+      params:
+        - name: github-clone-url
+          value: "$(params.github-clone-url)"
+      workspaces:
+        - name: git-credentials
+          workspace: git-credentials
+        - name: source
+          workspace: source
+
+    - name: docker-build
+      runAfter: ["git-clone"]
+      taskRef:
+        name: docker-build
+        kind: Task
+      workspaces:
+      - name: source
+        workspace: source
+      - name: docker-config
+        workspace: docker-config
+      params:
+      - name: IMAGE
+        value: $(params.IMAGE)
+      - name: DOCKERFILE
+        value: $(params.DOCKERFILE)
+      - name: CONTEXT
+        value: $(params.CONTEXT)
+      
+    - name: deploy
+      runAfter: ["docker-build"]
+      taskRef:
+        name: kubectl-deploy
+        kind: Task
+      params:
+        - name: MANIFEST_PATH
+          value: "$(params.MANIFEST_PATH)"
+        - name: YAML_PATH_TO_IMAGE
+          value: "$(params.YAML_PATH_TO_IMAGE)"
+        - name: IMAGE
+          value: "$(params.IMAGE)"
+        - name: ACTION
+          value: "$(params.ACTION)"
+      workspaces:
+        - name: source
+          workspace: source 
