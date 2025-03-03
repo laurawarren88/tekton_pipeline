@@ -30,9 +30,6 @@ spec:
     spec:
       pipelineRef:
         name: clone-build-push-pipeline
-      serviceAccountName: tekton-triggers-sa  
-      taskRunTemplate:
-        serviceAccountName: tekton-triggers-sa 
       params:
       - name: github-clone-url
         value: $(tt.params.github-clone-url)

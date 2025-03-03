@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: el-eventlistener
+  name: eventlistener
   namespace: lmwprac
 spec:
   serviceAccountName: tekton-triggers-sa

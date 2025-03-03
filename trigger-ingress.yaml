@@ -17,7 +17,7 @@ spec:
         paths:
           - backend:
               service:
-                name: el-el-eventlistener
+                name: el-eventlistener
                 port:
                   number: 8080
             path: /
