@@ -27,7 +27,6 @@ spec:
       generateName: clone-build-push-pipeline-run-
       namespace: lmwprac
     spec:
-      serviceAccountName: tekton-triggers-sa
       pipelineRef:
         name: clone-build-push-pipeline
       params:

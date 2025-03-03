@@ -4,6 +4,7 @@ metadata:
   name: el-eventlistener
   namespace: lmwprac
 spec:
+  serviceAccountName: tekton-triggers-sa
   triggers:
     - name: trigger
       bindings:
