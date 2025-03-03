@@ -106,11 +106,11 @@ Add a new webhook with:
 
 - Events to trigger: Select your desired option
 
-- Check active
+- Check Active
 
 - Click Update webhook
 
-if you added a secret, you need to ensure the secret is set in the Tekton pipeline:
+If you've added a secret, you need to ensure the secret is set in the Tekton pipeline:
 
 ```bash
 k create secret generic github-webhook-secret --from-literal=secretToken=the-secret-you-set
