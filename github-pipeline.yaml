@@ -29,6 +29,9 @@ spec:
     - name: ACTION
       type: string
       description: "kubectl action (apply/delete)"
+    - name: KUBENETES_DIR
+      type: string
+      description: "Path to the kubernetes directory"
   workspaces:
     - name: git-credentials
     - name: source
@@ -82,3 +85,15 @@ spec:
       workspaces:
         - name: source
           workspace: source 
+
+    - name: kubectl-run
+      runAfter: ["deploy"]
+      taskRef:
+        name: kubectl-run
+        kind: Task
+      params:
+        - name: KUBENETES_DIR
+          value: "$(params.KUBENETES_DIR)"
+      workspaces:
+        - name: source
+          workspace: source

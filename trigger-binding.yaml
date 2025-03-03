@@ -18,3 +18,5 @@ spec:
       value: ".spec.template.spec.containers[0].image"
     - name: ACTION
       value: apply
+    - name: KUBENETES_DIR
+      value: "k8s"
