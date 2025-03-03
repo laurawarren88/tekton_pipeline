@@ -15,8 +15,6 @@ metadata:
     app.kubernetes.io/version: "0.6"
   name: docker-build
   namespace: lmwprac
-  resourceVersion: "178917886"
-  uid: 885702ae-bcde-4ee2-940b-ba1ea283d20a
 spec:
   description: This Task builds a simple Dockerfile with kaniko and pushes to a registry.
     This Task stores the image name and digest as results, allowing Tekton Chains

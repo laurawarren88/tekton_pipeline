@@ -15,6 +15,12 @@ spec:
           params:
             - name: eventTypes
               value: ["pull_request", "push", "repository"]
+        - ref:
+            name: "cel"
+          params:
+            - name: "overlays"
+              value:
+                - key: "debug"
+                  expression: "body"
       template:
         ref: trigger-template
-

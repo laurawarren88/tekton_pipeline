@@ -1,0 +1,200 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  creationTimestamp: "2025-03-03T12:14:32Z"
+  generateName: clone-build-push-pipeline-run-
+  generation: 1
+  labels:
+    tekton.dev/pipeline: clone-build-push-pipeline
+    triggers.tekton.dev/eventlistener: el-eventlistener
+    triggers.tekton.dev/trigger: trigger
+    triggers.tekton.dev/triggers-eventid: d1d1440c-bf85-416d-99b4-4babf4f36298
+  name: clone-build-push-pipeline-run-hzn6v
+  namespace: lmwprac
+  resourceVersion: "181520162"
+  uid: ada80b46-dd2f-415d-8952-812a382d9307
+spec:
+  params:
+  - name: github-clone-url
+    value: https://github.com/laurawarren88/go_spa_backend_fitness_locator.git
+  - name: IMAGE
+    value: index.docker.io/lmwcode/go_spa_backend_fitness_locator:V.1.0.0
+  - name: DOCKERFILE
+    value: Dockerfile
+  - name: CONTEXT
+    value: .
+  - name: MANIFEST_PATH
+    value: k8s/deployment.yaml
+  - name: YAML_PATH_TO_IMAGE
+    value: .spec.template.spec.containers[0].image
+  - name: ACTION
+    value: apply
+  - name: KUBENETES_DIR
+    value: k8s
+  pipelineRef:
+    name: clone-build-push-pipeline
+  taskRunTemplate:
+    serviceAccountName: default
+  timeouts:
+    pipeline: 1h0m0s
+  workspaces:
+  - name: source
+    volumeClaimTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+      status: {}
+  - name: git-credentials
+    secret:
+      secretName: git-credentials
+  - name: docker-config
+    secret:
+      secretName: docker-config
+status:
+  childReferences:
+  - apiVersion: tekton.dev/v1
+    kind: TaskRun
+    name: clone-build-push-pipeline-run-hzn6v-git-clone
+    pipelineTaskName: git-clone
+  - apiVersion: tekton.dev/v1
+    kind: TaskRun
+    name: clone-build-push-pipeline-run-hzn6v-docker-build
+    pipelineTaskName: docker-build
+  - apiVersion: tekton.dev/v1
+    kind: TaskRun
+    name: clone-build-push-pipeline-run-hzn6v-deploy
+    pipelineTaskName: deploy
+  - apiVersion: tekton.dev/v1
+    kind: TaskRun
+    name: clone-build-push-pipeline-run-hzn6v-kubectl-run
+    pipelineTaskName: kubectl-run
+  completionTime: "2025-03-03T12:17:01Z"
+  conditions:
+  - lastTransitionTime: "2025-03-03T12:17:01Z"
+    message: 'Tasks Completed: 4 (Failed: 1, Cancelled 0), Skipped: 0'
+    reason: Failed
+    status: "False"
+    type: Succeeded
+  pipelineSpec:
+    description: "This pipeline clones a git repo, builds a Docker image with Kaniko
+      and\npushes it to a registry   \n"
+    params:
+    - description: The URL of the Git repository
+      name: github-clone-url
+      type: string
+    - description: The container registry where the image will be pushed
+      name: IMAGE
+      type: string
+    - description: Path to the Dockerfile to build. Defaults to ./Dockerfile
+      name: DOCKERFILE
+      type: string
+    - description: The build context used by Kaniko. Defaults to /workspace/source
+      name: CONTEXT
+      type: string
+    - description: Path to the Kubernetes manifest file
+      name: MANIFEST_PATH
+      type: string
+    - description: Path to the image field in the manifest
+      name: YAML_PATH_TO_IMAGE
+      type: string
+    - description: kubectl action (apply/delete)
+      name: ACTION
+      type: string
+    - description: Path to the kubernetes directory
+      name: KUBENETES_DIR
+      type: string
+    tasks:
+    - name: git-clone
+      params:
+      - name: github-clone-url
+        value: https://github.com/laurawarren88/go_spa_backend_fitness_locator.git
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+      - name: git-credentials
+        workspace: git-credentials
+      - name: source
+        workspace: source
+    - name: docker-build
+      params:
+      - name: IMAGE
+        value: index.docker.io/lmwcode/go_spa_backend_fitness_locator:V.1.0.0
+      - name: DOCKERFILE
+        value: Dockerfile
+      - name: CONTEXT
+        value: .
+      runAfter:
+      - git-clone
+      taskRef:
+        kind: Task
+        name: docker-build
+      workspaces:
+      - name: source
+        workspace: source
+      - name: docker-config
+        workspace: docker-config
+    - name: deploy
+      params:
+      - name: MANIFEST_PATH
+        value: k8s/deployment.yaml
+      - name: YAML_PATH_TO_IMAGE
+        value: .spec.template.spec.containers[0].image
+      - name: IMAGE
+        value: index.docker.io/lmwcode/go_spa_backend_fitness_locator:V.1.0.0
+      - name: ACTION
+        value: apply
+      runAfter:
+      - docker-build
+      taskRef:
+        kind: Task
+        name: kubectl-deploy
+      workspaces:
+      - name: source
+        workspace: source
+    - name: kubectl-run
+      params:
+      - name: KUBENETES_DIR
+        value: k8s
+      runAfter:
+      - deploy
+      taskRef:
+        kind: Task
+        name: kubectl-run
+      workspaces:
+      - name: source
+        workspace: source
+    workspaces:
+    - name: git-credentials
+    - name: source
+    - name: docker-config
+  provenance:
+    featureFlags:
+      AwaitSidecarReadiness: true
+      Coschedule: workspaces
+      DisableAffinityAssistant: false
+      DisableCredsInit: false
+      DisableInlineSpec: ""
+      EnableAPIFields: beta
+      EnableArtifacts: false
+      EnableCELInWhenExpression: false
+      EnableConciseResolverSyntax: false
+      EnableKeepPodOnCancel: false
+      EnableKubernetesSidecar: false
+      EnableParamEnum: false
+      EnableProvenanceInStatus: true
+      EnableStepActions: false
+      EnforceNonfalsifiability: none
+      MaxResultSize: 4096
+      RequireGitSSHSecretKnownHosts: false
+      ResultExtractionMethod: termination-message
+      RunningInEnvWithInjectedSidecars: true
+      SendCloudEventsForRuns: false
+      SetSecurityContext: false
+      VerificationNoMatchPolicy: ignore
+  startTime: "2025-03-03T12:14:32Z"
