@@ -98,11 +98,11 @@ k apply -f task-kubectl-run.yaml
 
 Add a new webhook with:
 
-- Payload URL: <https://tekton-trigger-ingress-hostname>
+- Payload URL same as your ingress host: <https://tekton-trigger-ingress-host>
 
 - Content type: application/json
 
-- Secret optional
+- Secret: Optional
 
 - Events to trigger: Select your desired option
 
