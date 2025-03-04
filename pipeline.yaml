@@ -20,9 +20,12 @@ spec:
     - name: CONTEXT
       type: string
       description: "The build context used by Kaniko. Defaults to /workspace/source"
-    - name: MANIFEST_PATH
+    - name: KUBERNETES_MANIFEST_PATH
       type: string
       description: "Path to the Kubernetes manifest file"
+    - name: HELM_MANIFEST_PATH
+      type: string
+      description: "Path to the Helm manifest file"
     - name: YAML_PATH_TO_IMAGE
       type: string
       description: "Path to the image field in the manifest"
@@ -83,8 +86,10 @@ spec:
         name: kubectl-deploy
         kind: Task
       params:
-        - name: MANIFEST_PATH
-          value: "$(params.MANIFEST_PATH)"
+        - name: KUBERNETES_MANIFEST_PATH
+          value: "$(params.KUBERNETES_MANIFEST_PATH)"
+        - name: HELM_MANIFEST_PATH
+          value: "$(params.HELM_MANIFEST_PATH)"
         - name: YAML_PATH_TO_IMAGE
           value: "$(params.YAML_PATH_TO_IMAGE)"
         - name: IMAGE

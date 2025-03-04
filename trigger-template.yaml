@@ -13,8 +13,10 @@ spec:
     description: The path to the Dockerfile to build
   - name: CONTEXT
     description: The build context used by Kaniko.
-  - name: MANIFEST_PATH
+  - name: KUBERNETES_MANIFEST_PATH
     description: The Kubernetes manifest file
+  - name: HELM_MANIFEST_PATH
+    description: The Helm manifest file
   - name: YAML_PATH_TO_IMAGE
     description: The path to the image field in the manifest
   - name: ACTION
@@ -45,8 +47,10 @@ spec:
         value: $(tt.params.DOCKERFILE)
       - name: CONTEXT
         value: $(tt.params.CONTEXT)
-      - name: MANIFEST_PATH
-        value: $(tt.params.MANIFEST_PATH)
+      - name: KUBERNETES_MANIFEST_PATH
+        value: $(tt.params.KUBERNETES_MANIFEST_PATH)
+      - name: HELM_MANIFEST_PATH
+        value: $(tt.params.HELM_MANIFEST_PATH)
       - name: YAML_PATH_TO_IMAGE
         value: $(tt.params.YAML_PATH_TO_IMAGE)
       - name: ACTION

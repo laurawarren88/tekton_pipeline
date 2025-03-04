@@ -12,8 +12,10 @@ spec:
       value: Dockerfile
     - name: CONTEXT
       value: "."
-    - name: MANIFEST_PATH
+    - name: KUBERNETES_MANIFEST_PATH
       value: "k8s/deployment.yaml"
+    - name: HELM_MANIFEST_PATH
+      value: "helm_webapp/templates/deployment.yaml"
     - name: YAML_PATH_TO_IMAGE
       value: ".spec.template.spec.containers[0].image"
     - name: ACTION
