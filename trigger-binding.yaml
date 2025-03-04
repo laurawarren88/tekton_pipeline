@@ -20,3 +20,9 @@ spec:
       value: apply
     - name: KUBENETES_DIR
       value: "k8s"
+    - name: RELEASE_NAME
+      value: $(body.repository.name)
+    - name: CHART_DIR
+      value: helm_webapp
+    - name: NAMESPACE
+      value: lmwprac

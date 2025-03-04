@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: helm-deploy
+  namespace: lmwprac
+spec:
+  params:
+  - name: RELEASE_NAME
+    type: string
+    description: Name of the Helm release
+  - name: CHART_DIR
+    type: string
+    description: Directory containing the Helm chart
+  - name: NAMESPACE
+    type: string
+    description: Kubernetes namespace for the release
+  steps:
+  - name: helm-upgrade
+    image: alpine/helm:3.12.3  # Use a Helm image
+    workingDir: $(workspaces.source.path)
+    script: |
+      # Install or upgrade the Helm release
+      helm upgrade --install $(params.RELEASE_NAME) $(params.CHART_DIR) --namespace $(params.NAMESPACE) --wait
+  workspaces:
+  - name: source

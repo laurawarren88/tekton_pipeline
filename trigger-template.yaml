@@ -21,6 +21,12 @@ spec:
     description: The action to perform with kubectl
   - name: KUBENETES_DIR
     description: The directory to apply the manifest
+  - name: RELEASE_NAME
+    description: The name of the Helm release
+  - name: CHART_DIR
+    description: The directory containing the Helm chart
+  - name: NAMESPACE
+    description: The Kubernetes namespace
   resourcetemplates:
   - apiVersion: tekton.dev/v1
     kind: PipelineRun
@@ -47,6 +53,12 @@ spec:
         value: $(tt.params.ACTION)
       - name: KUBENETES_DIR
         value: $(tt.params.KUBENETES_DIR)
+      - name: RELEASE_NAME
+        value: $(tt.params.RELEASE_NAME)
+      - name: CHART_DIR
+        value: $(tt.params.CHART_DIR)
+      - name: NAMESPACE
+        value: $(tt.params.NAMESPACE)
       workspaces:
         - name: source
           volumeClaimTemplate:

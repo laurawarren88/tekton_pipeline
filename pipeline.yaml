@@ -32,6 +32,15 @@ spec:
     - name: KUBENETES_DIR
       type: string
       description: "Path to the kubernetes directory"
+    - name: RELEASE_NAME
+      type: string
+      description: "The name of the Helm release"
+    - name: CHART_DIR
+      type: string
+      description: "Directory containing the Helm chart"
+    - name: NAMESPACE
+      type: string
+      description: "Kubernetes namespace for the release"
   workspaces:
     - name: git-credentials
     - name: source
@@ -94,6 +103,22 @@ spec:
       params:
         - name: KUBENETES_DIR
           value: "$(params.KUBENETES_DIR)"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: helm-deploy
+      runAfter: ["deploy"]
+      taskRef:
+        name: helm-deploy
+        kind: Task
+      params:
+        - name: RELEASE_NAME
+          value: $(params.RELEASE_NAME)
+        - name: CHART_DIR
+          value: $(params.CHART_DIR)
+        - name: NAMESPACE
+          value: $(params.NAMESPACE)
       workspaces:
         - name: source
           workspace: source
