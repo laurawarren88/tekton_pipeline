@@ -21,8 +21,8 @@ spec:
     description: The path to the image field in the manifest
   - name: ACTION
     description: The action to perform with kubectl
-  - name: KUBENETES_DIR
-    description: The directory to apply the manifest
+  # - name: KUBENETES_DIR
+  #   description: The directory to apply the manifest
   - name: RELEASE_NAME
     description: The name of the Helm release
   - name: CHART_DIR
@@ -55,8 +55,8 @@ spec:
         value: $(tt.params.YAML_PATH_TO_IMAGE)
       - name: ACTION
         value: $(tt.params.ACTION)
-      - name: KUBENETES_DIR
-        value: $(tt.params.KUBENETES_DIR)
+      # - name: KUBENETES_DIR
+      #   value: $(tt.params.KUBENETES_DIR)
       - name: RELEASE_NAME
         value: $(tt.params.RELEASE_NAME)
       - name: CHART_DIR

@@ -20,8 +20,8 @@ spec:
       value: ".spec.template.spec.containers[0].image"
     - name: ACTION
       value: apply
-    - name: KUBENETES_DIR
-      value: "k8s"
+    # - name: KUBENETES_DIR
+    #   value: "k8s"
     - name: RELEASE_NAME
       value: $(body.repository.name)
     - name: CHART_DIR

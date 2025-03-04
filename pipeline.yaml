@@ -32,9 +32,9 @@ spec:
     - name: ACTION
       type: string
       description: "kubectl action (apply/delete)"
-    - name: KUBENETES_DIR
-      type: string
-      description: "Path to the kubernetes directory"
+    # - name: KUBENETES_DIR
+    #   type: string
+    #   description: "Path to the kubernetes directory"
     - name: RELEASE_NAME
       type: string
       description: "The name of the Helm release"
@@ -100,17 +100,17 @@ spec:
         - name: source
           workspace: source 
 
-    - name: kubectl-run
-      runAfter: ["deploy"]
-      taskRef:
-        name: kubectl-run
-        kind: Task
-      params:
-        - name: KUBENETES_DIR
-          value: "$(params.KUBENETES_DIR)"
-      workspaces:
-        - name: source
-          workspace: source
+    # - name: kubectl-run
+    #   runAfter: ["deploy"]
+    #   taskRef:
+    #     name: kubectl-run
+    #     kind: Task
+    #   params:
+    #     - name: KUBENETES_DIR
+    #       value: "$(params.KUBENETES_DIR)"
+    #   workspaces:
+    #     - name: source
+    #       workspace: source
 
     - name: helm-deploy
       runAfter: ["deploy"]
