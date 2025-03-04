@@ -7,7 +7,7 @@ spec:
     - name: github-clone-url
       value: $(body.repository.clone_url)
     - name: IMAGE
-      value: index.docker.io/lmwcode/$(body.repository.name):V.2.0.0
+      value: index.docker.io/lmwcode/$(body.repository.name):$(body.head_commit.id[0:7])
     - name: DOCKERFILE
       value: Dockerfile
     - name: CONTEXT
