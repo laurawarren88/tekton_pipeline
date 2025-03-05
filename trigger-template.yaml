@@ -7,6 +7,10 @@ spec:
   params:
   - name: github-clone-url
     description: The GitHub repository URL to clone
+  - name: SONAR_HOST_URL
+    description: The SonarQube server URL
+  - name: PROJECT_KEY
+    description: The project key in SonarQube
   - name: IMAGE
     description: The image reference to push to the registry
   - name: DOCKERFILE
@@ -43,6 +47,10 @@ spec:
       params:
       - name: github-clone-url
         value: $(tt.params.github-clone-url)
+      - name: SONAR_HOST_URL
+        value: $(tt.params.SONAR_HOST_URL)
+      - name: PROJECT_KEY
+        value: $(tt.params.PROJECT_KEY)
       - name: IMAGE
         value: $(tt.params.IMAGE)
       - name: DOCKERFILE

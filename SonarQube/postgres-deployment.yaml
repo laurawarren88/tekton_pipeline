@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube-db
+  namespace: lmwprac
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube-db
+  template:
+    metadata:
+      labels:
+        app: sonarqube-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:alpine
+          ports:
+          - containerPort: 5432
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sonarqube-postgres-secret
+                  key: SONAR_JDBC_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sonarqube-postgres-secret
+                  key: SONAR_JDBC_PASSWORD
+            - name: POSTGRES_DB
+              value: sonarqube
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: sonarqube-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube-db
+  namespace: lmwprac
+spec:
+  selector:
+    app: sonarqube-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonarqube-postgres-pvc
+  namespace: lmwprac
+  labels:
+    app: sonarqube-db-service
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi  
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sonarqube-postgres-pv
+  namespace: lmwprac
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi  
+  accessModes:
+    - ReadWriteOnce  
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/mnt/data" 
