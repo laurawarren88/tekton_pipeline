@@ -20,6 +20,9 @@ spec:
     - name: CONTEXT
       type: string
       description: "The build context used by Kaniko. Defaults to /workspace/source"
+    - name: TRIVY_SEVERITY
+      type: string
+      description: "Comma-separated list of severities to scan for. Defaults to CRITICAL,HIGH"
     - name: KUBERNETES_MANIFEST_PATH
       type: string
       description: "Path to the Kubernetes manifest file"
@@ -79,9 +82,20 @@ spec:
         value: $(params.DOCKERFILE)
       - name: CONTEXT
         value: $(params.CONTEXT)
+
+    - name: trivy-scan
+      runAfter: ["docker-build"]
+      taskRef:
+        name: trivy-scan
+        kind: Task
+      params:
+      - name: TRIVY_SEVERITY
+        value: $(params.TRIVY_SEVERITY)
+      - name: IMAGE
+        value: $(params.IMAGE)
       
     - name: deploy
-      runAfter: ["docker-build"]
+      runAfter: ["trivy-scan"]
       taskRef:
         name: kubectl-deploy
         kind: Task

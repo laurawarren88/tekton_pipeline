@@ -13,6 +13,8 @@ spec:
     description: The path to the Dockerfile to build
   - name: CONTEXT
     description: The build context used by Kaniko.
+  - name: TRIVY_SEVERITY
+    description: The severity levels to scan for vulnerabilities
   - name: KUBERNETES_MANIFEST_PATH
     description: The Kubernetes manifest file
   - name: HELM_MANIFEST_PATH
@@ -47,6 +49,8 @@ spec:
         value: $(tt.params.DOCKERFILE)
       - name: CONTEXT
         value: $(tt.params.CONTEXT)
+      - name: TRIVY_SEVERITY
+        value: $(tt.params.TRIVY_SEVERITY)
       - name: KUBERNETES_MANIFEST_PATH
         value: $(tt.params.KUBERNETES_MANIFEST_PATH)
       - name: HELM_MANIFEST_PATH

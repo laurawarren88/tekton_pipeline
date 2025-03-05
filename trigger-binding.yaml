@@ -12,6 +12,8 @@ spec:
       value: Dockerfile
     - name: CONTEXT
       value: "."
+    - name: TRIVY_SEVERITY
+      value: "CRITICAL,HIGH"
     - name: KUBERNETES_MANIFEST_PATH
       value: "k8s/deployment.yaml"
     - name: HELM_MANIFEST_PATH

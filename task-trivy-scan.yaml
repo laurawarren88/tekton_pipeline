@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: trivy-scan
+  namespace: lmwprac
+spec:
+  description: Scans a built Docker image for vulnerabilities using Trivy.
+  params:
+    - name: IMAGE
+      description: The image reference to scan.
+      type: string
+    - name: TRIVY_SEVERITY
+      description: Comma-separated list of severities to scan for.
+      type: string
+      default: "CRITICAL,HIGH"
+  steps:
+    - name: scan
+      image: aquasec/trivy:latest
+      script: |
+        #!/bin/sh
+        set -e
+        trivy image --scanners vuln --exit-code 1 --severity $(params.TRIVY_SEVERITY) $(params.IMAGE)
