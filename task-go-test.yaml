@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: go-test
+  namespace: lmwprac
+spec:
+  params:
+  - name: GO_TEST_DIR
+    type: string
+    description: The directory containing the Go test files
+  steps:
+  - name: go-test
+    image: golang
+    workingDir: $(workspaces.source.path)
+    script: |
+      #!/bin/sh
+      set -e
+      echo  "Running go test in $(workspaces.source.path)$(params.GO_TEST_DIR)"
+      go test -v $(workspaces.source.path)$(params.GO_TEST_DIR)
+  workspaces:
+  - name: source

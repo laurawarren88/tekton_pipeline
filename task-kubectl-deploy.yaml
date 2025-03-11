@@ -4,9 +4,6 @@ metadata:
   name: kubectl-deploy
 spec:
   params:
-    - name: KUBERNETES_MANIFEST_PATH
-      type: string
-      description: Path to the kubernetes manifest to change image name
     - name: HELM_MANIFEST_PATH
       type: string
       description: Path to the helm manifest to change image name
@@ -33,13 +30,11 @@ spec:
       image: mikefarah/yq
       workingDir: $(workspaces.source.path)
       script: |
-        yq -i '$(params.YAML_PATH_TO_IMAGE) = "$(params.IMAGE)"' $(params.KUBERNETES_MANIFEST_PATH)
         yq -i '$(params.YAML_PATH_TO_IMAGE) = "$(params.IMAGE)"' $(params.HELM_MANIFEST_PATH)
     - name: run-kubectl 
       image: lachlanevenson/k8s-kubectl
       workingDir: $(workspaces.source.path)
       script: |
-        kubectl $(params.ACTION) -f $(params.KUBERNETES_MANIFEST_PATH)
         kubectl $(params.ACTION) -f $(params.HELM_MANIFEST_PATH)
   workspaces:
     - name: source

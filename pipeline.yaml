@@ -11,12 +11,12 @@ spec:
     - name: github-clone-url
       type: string
       description: "The URL of the Git repository"
-    # - name: SONAR_HOST_URL
-    #   type: string
-    #   description: "SonarQube server URL"
-    # - name: PROJECT_KEY
-    #   type: string
-    #   description: "Project key in SonarQube"
+    - name: SONAR_HOST_URL
+      type: string
+      description: "SonarQube server URL"
+    - name: PROJECT_KEY
+      type: string
+      description: "Project key in SonarQube"
     - name: IMAGE
       type: string
       description: "The container registry where the image will be pushed"
@@ -29,9 +29,9 @@ spec:
     - name: TRIVY_SEVERITY
       type: string
       description: "Comma-separated list of severities to scan for. Defaults to CRITICAL,HIGH"
-    - name: KUBERNETES_MANIFEST_PATH
+    - name: GO_TEST_DIR
       type: string
-      description: "Path to the Kubernetes manifest file"
+      description: "Directory containing the Go test files"
     - name: HELM_MANIFEST_PATH
       type: string
       description: "Path to the Helm manifest file"
@@ -41,9 +41,6 @@ spec:
     - name: ACTION
       type: string
       description: "kubectl action (apply/delete)"
-    # - name: KUBENETES_DIR
-    #   type: string
-    #   description: "Path to the kubernetes directory"
     - name: RELEASE_NAME
       type: string
       description: "The name of the Helm release"
@@ -71,23 +68,22 @@ spec:
         - name: source
           workspace: source
 
-    # - name: sonarqube-scan
-    #   runAfter: ["git-clone"]
-    #   taskRef:
-    #     name: sonarqube-scan
-    #     kind: Task
-    #   params:
-    #     - name: SONAR_HOST_URL
-    #       value: $(params.SONAR_HOST_URL)
-    #     - name: PROJECT_KEY
-    #       value: $(params.PROJECT_KEY)
-    #   workspaces:
-    #     - name: source
-    #       workspace: source
+    - name: sonarqube-scan
+      runAfter: ["git-clone"]
+      taskRef:
+        name: sonarqube-scan
+        kind: Task
+      params:
+        - name: SONAR_HOST_URL
+          value: $(params.SONAR_HOST_URL)
+        - name: PROJECT_KEY
+          value: $(params.PROJECT_KEY)
+      workspaces:
+        - name: source
+          workspace: source
 
     - name: docker-build
-      # runAfter: ["sonarqube-scan"]
-      runAfter: ["git-clone"]
+      runAfter: ["sonarqube-scan"]
       taskRef:
         name: docker-build
         kind: Task
@@ -114,15 +110,27 @@ spec:
         value: $(params.TRIVY_SEVERITY)
       - name: IMAGE
         value: $(params.IMAGE)
+
+    - name: go-test
+      runAfter: ["docker-build"]
+      taskRef:
+        name: go-test
+        kind: Task
+      params:
+        - name: GO_TEST_DIR
+          value: $(params.GO_TEST_DIR)
+      workspaces:
+        - name: source
+          workspace: source
       
     - name: deploy
-      runAfter: ["trivy-scan"]
+      runAfter: 
+        - trivy-scan
+        - go-test
       taskRef:
         name: kubectl-deploy
         kind: Task
       params:
-        - name: KUBERNETES_MANIFEST_PATH
-          value: $(params.KUBERNETES_MANIFEST_PATH)
         - name: HELM_MANIFEST_PATH
           value: $(params.HELM_MANIFEST_PATH)
         - name: YAML_PATH_TO_IMAGE
@@ -134,18 +142,6 @@ spec:
       workspaces:
         - name: source
           workspace: source 
-
-    # - name: kubectl-run
-    #   runAfter: ["deploy"]
-    #   taskRef:
-    #     name: kubectl-run
-    #     kind: Task
-    #   params:
-    #     - name: KUBENETES_DIR
-    #       value: "$(params.KUBENETES_DIR)"
-    #   workspaces:
-    #     - name: source
-    #       workspace: source
 
     - name: helm-deploy
       runAfter: ["deploy"]

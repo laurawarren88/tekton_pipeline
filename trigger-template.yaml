@@ -19,16 +19,14 @@ spec:
     description: The build context used by Kaniko.
   - name: TRIVY_SEVERITY
     description: The severity levels to scan for vulnerabilities
-  - name: KUBERNETES_MANIFEST_PATH
-    description: The Kubernetes manifest file
+  - name: GO_TEST_DIR
+    description: The directory containing the Go test files
   - name: HELM_MANIFEST_PATH
     description: The Helm manifest file
   - name: YAML_PATH_TO_IMAGE
     description: The path to the image field in the manifest
   - name: ACTION
     description: The action to perform with kubectl
-  # - name: KUBENETES_DIR
-  #   description: The directory to apply the manifest
   - name: RELEASE_NAME
     description: The name of the Helm release
   - name: CHART_DIR
@@ -59,16 +57,14 @@ spec:
         value: $(tt.params.CONTEXT)
       - name: TRIVY_SEVERITY
         value: $(tt.params.TRIVY_SEVERITY)
-      - name: KUBERNETES_MANIFEST_PATH
-        value: $(tt.params.KUBERNETES_MANIFEST_PATH)
+      - name: GO_TEST_DIR
+        value: $(tt.params.GO_TEST_DIR)
       - name: HELM_MANIFEST_PATH
         value: $(tt.params.HELM_MANIFEST_PATH)
       - name: YAML_PATH_TO_IMAGE
         value: $(tt.params.YAML_PATH_TO_IMAGE)
       - name: ACTION
         value: $(tt.params.ACTION)
-      # - name: KUBENETES_DIR
-      #   value: $(tt.params.KUBENETES_DIR)
       - name: RELEASE_NAME
         value: $(tt.params.RELEASE_NAME)
       - name: CHART_DIR
@@ -77,8 +73,6 @@ spec:
         value: $(tt.params.NAMESPACE)
       workspaces:
         - name: source
-          # persistentVolumeClaim:
-          #   claimName: pvc-lmw
           volumeClaimTemplate:
             metadata:
               creationTimestamp: null

@@ -6,10 +6,10 @@ spec:
   params:
     - name: github-clone-url
       value: $(body.repository.clone_url)
-    # - name: SONAR_HOST_URL
-    #   value: http://sonarqube-service.lmwprac.svc.cluster.local:9000
-    # - name: PROJECT_KEY
-    #   value: fitness-locator
+    - name: SONAR_HOST_URL
+      value: http://sonarqube-sonarqube.lmwprac.svc.cluster.local:9000
+    - name: PROJECT_KEY
+      value: fitness-locator
     - name: IMAGE
       value: index.docker.io/lmwcode/$(body.repository.name):$(body.head_commit.id)
     - name: DOCKERFILE
@@ -18,16 +18,14 @@ spec:
       value: "."
     - name: TRIVY_SEVERITY
       value: "CRITICAL,HIGH"
-    - name: KUBERNETES_MANIFEST_PATH
-      value: "k8s/deployment.yaml"
+    - name: GO_TEST_DIR
+      value: "/tests"
     - name: HELM_MANIFEST_PATH
       value: "helm_webapp/templates/deployment.yaml"
     - name: YAML_PATH_TO_IMAGE
       value: ".spec.template.spec.containers[0].image"
     - name: ACTION
       value: apply
-    # - name: KUBENETES_DIR
-    #   value: "k8s"
     - name: RELEASE_NAME
       value: $(body.repository.name)
     - name: CHART_DIR
