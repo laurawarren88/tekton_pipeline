@@ -15,7 +15,13 @@ spec:
     script: |
       #!/bin/sh
       set -e
-      echo  "Running go test in $(workspaces.source.path)$(params.GO_TEST_DIR)"
-      go test -v $(workspaces.source.path)$(params.GO_TEST_DIR)
+      
+       if [ -f "$(workspaces.source.path)/go.mod" ]; then
+        echo "Running Go tests for the backend"
+        echo "Running go test in $(workspaces.source.path)$(params.GO_TEST_DIR)"
+        go test -v $(workspaces.source.path)$(params.GO_TEST_DIR)
+      else
+        echo "No go.mod file found. Skipping Go tests (likely frontend)"
+      fi
   workspaces:
   - name: source
