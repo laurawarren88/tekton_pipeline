@@ -41,12 +41,12 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-            claimName: sonarqube-postgres-pvc
+            claimName: sonarqube-postgres-lmw-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sonarqube-db
+  name: sonarqube-db-service
   namespace: lmwprac
 spec:
   selector:
@@ -60,11 +60,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sonarqube-postgres-pvc
+  name: sonarqube-postgres-lmw-pvc
   namespace: lmwprac
   labels:
     app: sonarqube-db-service
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
@@ -74,8 +75,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sonarqube-postgres-pv
-  namespace: lmwprac
+  name: sonarqube-postgres-lmw-pv
 spec:
   storageClassName: manual
   capacity:

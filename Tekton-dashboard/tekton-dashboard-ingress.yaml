@@ -7,7 +7,8 @@ metadata:
   namespace: tekton-pipelines
 spec:
   rules:
-    - host: tekton.dev.clusters.easlab.co.uk
+    # - host: tekton.dev.clusters.easlab.co.uk
+    - host: tekton.hyades.clusters.easlab.co.uk
       http:
         paths:
           - backend:
@@ -19,5 +20,6 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - tekton.dev.clusters.easlab.co.uk
+        # - tekton.dev.clusters.easlab.co.uk
+        - tekton.hyades.clusters.easlab.co.uk
       secretName: tekton-dashboard-lmw-tls

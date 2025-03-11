@@ -77,6 +77,8 @@ spec:
         value: $(tt.params.NAMESPACE)
       workspaces:
         - name: source
+          # persistentVolumeClaim:
+          #   claimName: pvc-lmw
           volumeClaimTemplate:
             metadata:
               creationTimestamp: null
@@ -86,6 +88,7 @@ spec:
               resources:
                 requests:
                   storage: 1Gi
+              storageClassName: nfs-csi
         - name: git-credentials
           secret:
             secretName: git-credentials

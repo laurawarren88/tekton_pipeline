@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-http01
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
@@ -11,8 +11,11 @@ metadata:
   name: ingress-trigger
   namespace: lmwprac
 spec:
+  ingressClassName: nginx
   rules:
-    - host: trigger.lmwprac.dev.clusters.easlab.co.uk
+    # - host: trigger.lmwprac.dev.clusters.easlab.co.uk
+    # - host: trigger.lmwprac.lmw.clusters.easlab.co.uk
+    - host: trigger.lmwprac.hyades.clusters.easlab.co.uk
       http:
         paths:
           - backend:
@@ -24,5 +27,7 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - trigger.lmwprac.dev.clusters.easlab.co.uk
+        # - trigger.lmwprac.dev.clusters.easlab.co.uk
+        # - trigger.lmwprac.lmw.clusters.easlab.co.uk
+        - trigger.lmwprac.hyades.clusters.easlab.co.uk
       secretName: trigger-lmwprac-tls

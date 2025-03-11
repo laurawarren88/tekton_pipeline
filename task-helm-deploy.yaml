@@ -20,6 +20,6 @@ spec:
     workingDir: $(workspaces.source.path)
     script: |
       # Install or upgrade the Helm release
-      helm upgrade --install $(params.RELEASE_NAME) $(params.CHART_DIR) --namespace $(params.NAMESPACE) --wait
+      helm upgrade --install $(params.RELEASE_NAME) $(params.CHART_DIR) --namespace $(params.NAMESPACE) --wait 
   workspaces:
   - name: source

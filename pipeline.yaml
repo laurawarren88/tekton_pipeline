@@ -11,12 +11,12 @@ spec:
     - name: github-clone-url
       type: string
       description: "The URL of the Git repository"
-    - name: SONAR_HOST_URL
-      type: string
-      description: "SonarQube server URL"
-    - name: PROJECT_KEY
-      type: string
-      description: "Project key in SonarQube"
+    # - name: SONAR_HOST_URL
+    #   type: string
+    #   description: "SonarQube server URL"
+    # - name: PROJECT_KEY
+    #   type: string
+    #   description: "Project key in SonarQube"
     - name: IMAGE
       type: string
       description: "The container registry where the image will be pushed"
@@ -71,22 +71,23 @@ spec:
         - name: source
           workspace: source
 
-    - name: sonarqube-scan
-      runAfter: ["git-clone"]
-      taskRef:
-        name: sonarqube-scan
-        kind: Task
-      params:
-        - name: SONAR_HOST_URL
-          value: $(params.SONAR_HOST_URL)
-        - name: PROJECT_KEY
-          value: $(params.PROJECT_KEY)
-      workspaces:
-        - name: source
-          workspace: source
+    # - name: sonarqube-scan
+    #   runAfter: ["git-clone"]
+    #   taskRef:
+    #     name: sonarqube-scan
+    #     kind: Task
+    #   params:
+    #     - name: SONAR_HOST_URL
+    #       value: $(params.SONAR_HOST_URL)
+    #     - name: PROJECT_KEY
+    #       value: $(params.PROJECT_KEY)
+    #   workspaces:
+    #     - name: source
+    #       workspace: source
 
     - name: docker-build
-      runAfter: ["sonarqube-scan"]
+      # runAfter: ["sonarqube-scan"]
+      runAfter: ["git-clone"]
       taskRef:
         name: docker-build
         kind: Task

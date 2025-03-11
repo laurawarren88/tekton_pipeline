@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sonarqube-lmw-ingress
+  namespace: lmwprac
+spec:
+  rules:
+  - host: lmw-sonarqube.lmwprac.svc.cluster.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lmw-sonarqube
+            port:
+              number: 9001
