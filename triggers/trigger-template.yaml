@@ -5,7 +5,7 @@ metadata:
   namespace: lmwprac
 spec:
   params:
-  - name: github-clone-url
+  - name: GITHUB_CLONE_URL
     description: The GitHub repository URL to clone
   - name: SONAR_HOST_URL
     description: The SonarQube server URL
@@ -17,16 +17,16 @@ spec:
     description: The path to the Dockerfile to build
   - name: CONTEXT
     description: The build context used by Kaniko.
+  - name: EXTRA_ARGS
+    description: Extra arguments to pass to Kaniko
+  - name: BUILDER_IMAGE
+    description: The image to use for the Kaniko builder
   - name: TRIVY_SEVERITY
     description: The severity levels to scan for vulnerabilities
-  - name: GO_TEST_DIR
-    description: The directory containing the Go test files
   - name: HELM_MANIFEST_PATH
     description: The Helm manifest file
   - name: YAML_PATH_TO_IMAGE
     description: The path to the image field in the manifest
-  - name: ACTION
-    description: The action to perform with kubectl
   - name: RELEASE_NAME
     description: The name of the Helm release
   - name: CHART_DIR
@@ -37,14 +37,14 @@ spec:
   - apiVersion: tekton.dev/v1
     kind: PipelineRun
     metadata:
-      generateName: clone-build-push-pipeline-run-
+      generateName: build-test-deploy-pipeline-run-
       namespace: lmwprac
     spec:
       pipelineRef:
-        name: clone-build-push-pipeline
+        name: build-test-deploy-pipeline
       params:
-      - name: github-clone-url
-        value: $(tt.params.github-clone-url)
+      - name: GITHUB_CLONE_URL
+        value: $(tt.params.GITHUB_CLONE_URL)
       - name: SONAR_HOST_URL
         value: $(tt.params.SONAR_HOST_URL)
       - name: PROJECT_KEY
@@ -55,16 +55,16 @@ spec:
         value: $(tt.params.DOCKERFILE)
       - name: CONTEXT
         value: $(tt.params.CONTEXT)
+      - name: EXTRA_ARGS
+        value: $(tt.params.EXTRA_ARGS)
+      - name: BUILDER_IMAGE
+        value: $(tt.params.BUILDER_IMAGE)
       - name: TRIVY_SEVERITY
         value: $(tt.params.TRIVY_SEVERITY)
-      - name: GO_TEST_DIR
-        value: $(tt.params.GO_TEST_DIR)
       - name: HELM_MANIFEST_PATH
         value: $(tt.params.HELM_MANIFEST_PATH)
       - name: YAML_PATH_TO_IMAGE
         value: $(tt.params.YAML_PATH_TO_IMAGE)
-      - name: ACTION
-        value: $(tt.params.ACTION)
       - name: RELEASE_NAME
         value: $(tt.params.RELEASE_NAME)
       - name: CHART_DIR

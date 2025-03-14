@@ -1,48 +1,44 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
+  name: kaniko-docker-build
+  namespace: lmwprac
   annotations:
     tekton.dev/categories: Image Build
     tekton.dev/displayName: Build and upload container image using Kaniko
     tekton.dev/pipelines.minVersion: 0.17.0
     tekton.dev/platforms: linux/amd64,linux/arm64,linux/ppc64le
     tekton.dev/tags: image-build
-  creationTimestamp: "2025-02-28T09:56:42Z"
   generation: 1
   labels:
     app.kubernetes.io/version: "0.6"
-  name: docker-build
-  namespace: lmwprac
 spec:
   description: This Task builds a simple Dockerfile with kaniko and pushes to a registry.
     This Task stores the image name and digest as results, allowing Tekton Chains
     to pick up that an image was built & sign it.
   params:
-    - description: Name (reference) of the image to build.
-      name: IMAGE
+    - name: IMAGE
       type: string
-    - default: ./Dockerfile
+      description: Name (reference) of the image to build.
+    - name: DOCKERFILE
+      type: string
       description: Path to the Dockerfile to build.
-      name: DOCKERFILE
+    - name: CONTEXT
       type: string
-    - default: ./
       description: The build context used by Kaniko.
-      name: CONTEXT
-      type: string
-    - default: ["--cache=false"]
-      name: EXTRA_ARGS
+    - name: EXTRA_ARGS
       type: array
-    - default: gcr.io/kaniko-project/executor:v1.5.1@sha256:c6166717f7fe0b7da44908c986137ecfeab21f31ec3992f6e128fff8a94be8a5
+      description: Extra arguments to pass to Kaniko.
+    - name: BUILDER_IMAGE
+      type: string
       description: The image on which builds will run (default is v1.5.1)
-      name: BUILDER_IMAGE
-      type: string
   results:
-    - description: Digest of the image just built.
-      name: IMAGE_DIGEST
+    - name: IMAGE_DIGEST
       type: string
-    - description: URL of the image just built.
-      name: IMAGE_URL
+      description: Digest of the image just built.
+    - name: IMAGE_URL
       type: string
+      description: URL of the image just built.
   steps:
     - args:
         - $(params.EXTRA_ARGS)

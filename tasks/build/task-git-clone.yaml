@@ -5,7 +5,7 @@ metadata:
   namespace: lmwprac
 spec:
   params:
-  - name: github-clone-url
+  - name: GITHUB_CLONE_URL
     type: string
     description: The URL of the GitHub repository to clone
   steps:
@@ -13,7 +13,7 @@ spec:
     image: alpine/git
     script: |
       #!/bin/sh
-      git clone $(inputs.params.github-clone-url) $(workspaces.source.path)
+      git clone $(inputs.params.GITHUB_CLONE_URL) $(workspaces.source.path)
       cd $(workspaces.source.path)
       echo "Repository cloned to $(workspaces.source.path)"
   workspaces:

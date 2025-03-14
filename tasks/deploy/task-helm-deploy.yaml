@@ -15,7 +15,7 @@ spec:
     type: string
     description: Kubernetes namespace for the release
   steps:
-  - name: helm-upgrade
+  - name: helm-deploy
     image: alpine/helm:3.12.3 
     workingDir: $(workspaces.source.path)
     script: |

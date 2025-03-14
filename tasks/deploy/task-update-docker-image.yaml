@@ -1,7 +1,8 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: kubectl-deploy
+  name: update-docker-image
+  namespace: lmwprac
 spec:
   params:
     - name: HELM_MANIFEST_PATH
@@ -13,29 +14,12 @@ spec:
     - name: IMAGE 
       type: string
       description: The name of the image that was built 
-    - name: ACTION
-      type: string
-      description: The action to perform with kubectl
   steps:
-    - name: debug-list-files
-      image: busybox
-      workingDir: $(workspaces.source.path)
-      script: |
-        #!/bin/sh
-        echo "Checking files in workspace..."
-        ls -la
-        ls -la helm_webapp/
-        ls -la helm_webapp/templates/
-    - name: replace-image
+    - name: update-docker-image
       image: mikefarah/yq
       workingDir: $(workspaces.source.path)
       script: |
         yq -i '$(params.YAML_PATH_TO_IMAGE) = "$(params.IMAGE)"' $(params.HELM_MANIFEST_PATH)
-    - name: run-kubectl 
-      image: lachlanevenson/k8s-kubectl
-      workingDir: $(workspaces.source.path)
-      script: |
-        kubectl $(params.ACTION) -f $(params.HELM_MANIFEST_PATH)
   workspaces:
     - name: source
   results:

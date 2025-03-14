@@ -12,7 +12,7 @@ spec:
       type: string
       description: "Project key in SonarQube"
   steps:
-    - name: run-sonarqube
+    - name: sonarqube-scan
       image: sonarsource/sonar-scanner-cli:latest
       workingDir: $(workspaces.source.path)
       env:
@@ -24,7 +24,6 @@ spec:
       script: |
         #!/bin/sh
         set -e
-        echo "Sonar token (masked for security): ${SONAR_TOKEN:0:4}******"
         cd $(workspaces.source.path)
         sonar-scanner \
           -Dsonar.projectKey=$(params.PROJECT_KEY) \

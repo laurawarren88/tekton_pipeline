@@ -8,7 +8,7 @@ spec:
     This pipeline clones a git repo, builds a Docker image with Kaniko and
     pushes it to a registry   
   params:
-    - name: github-clone-url
+    - name: GITHUB_CLONE_URL
       type: string
       description: "The URL of the Git repository"
     - name: SONAR_HOST_URL
@@ -26,21 +26,21 @@ spec:
     - name: CONTEXT
       type: string
       description: "The build context used by Kaniko. Defaults to /workspace/source"
+    - name: EXTRA_ARGS
+      type: string
+      description: "Additional arguments to pass to Kaniko. Defaults to --cache=true"
+    - name: BUILDER_IMAGE
+      type: string
+      description: "The image to use as the builder. Defaults to gcr.io/kaniko-project/executor:latest"
     - name: TRIVY_SEVERITY
       type: string
       description: "Comma-separated list of severities to scan for. Defaults to CRITICAL,HIGH"
-    - name: GO_TEST_DIR
-      type: string
-      description: "Directory containing the Go test files"
     - name: HELM_MANIFEST_PATH
       type: string
       description: "Path to the Helm manifest file"
     - name: YAML_PATH_TO_IMAGE
       type: string
       description: "Path to the image field in the manifest"
-    - name: ACTION
-      type: string
-      description: "kubectl action (apply/delete)"
     - name: RELEASE_NAME
       type: string
       description: "The name of the Helm release"
@@ -60,8 +60,8 @@ spec:
         name: git-clone
         kind: Task
       params:
-        - name: github-clone-url
-          value: $(params.github-clone-url)
+        - name: GITHUB_CLONE_URL
+          value: $(params.GITHUB_CLONE_URL)
       workspaces:
         - name: git-credentials
           workspace: git-credentials
@@ -82,10 +82,10 @@ spec:
         - name: source
           workspace: source
 
-    - name: docker-build
+    - name: kaniko-docker-build
       runAfter: ["sonarqube-scan"]
       taskRef:
-        name: docker-build
+        name: kaniko-docker-build
         kind: Task
       workspaces:
       - name: source
@@ -99,9 +99,13 @@ spec:
         value: $(params.DOCKERFILE)
       - name: CONTEXT
         value: $(params.CONTEXT)
+      - name: EXTRA_ARGS
+        value: $(params.EXTRA_ARGS)
+      - name: BUILDER_IMAGE
+        value: $(params.BUILDER_IMAGE)
 
     - name: trivy-scan
-      runAfter: ["docker-build"]
+      runAfter: ["kaniko-docker-build"]
       taskRef:
         name: trivy-scan
         kind: Task
@@ -112,23 +116,20 @@ spec:
         value: $(params.IMAGE)
 
     - name: go-test
-      runAfter: ["docker-build"]
+      runAfter: ["kaniko-docker-build"]
       taskRef:
         name: go-test
         kind: Task
-      params:
-        - name: GO_TEST_DIR
-          value: $(params.GO_TEST_DIR)
       workspaces:
         - name: source
           workspace: source
       
-    - name: deploy
+    - name: update-docker-image
       runAfter: 
         - trivy-scan
         - go-test
       taskRef:
-        name: kubectl-deploy
+        name: update-docker-image
         kind: Task
       params:
         - name: HELM_MANIFEST_PATH
@@ -137,14 +138,12 @@ spec:
           value: $(params.YAML_PATH_TO_IMAGE)
         - name: IMAGE
           value: $(params.IMAGE)
-        - name: ACTION
-          value: $(params.ACTION)
       workspaces:
         - name: source
           workspace: source 
 
     - name: helm-deploy
-      runAfter: ["deploy"]
+      runAfter: ["update-docker-image"]
       taskRef:
         name: helm-deploy
         kind: Task

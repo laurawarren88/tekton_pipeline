@@ -7,14 +7,13 @@ spec:
   description: Scans a built Docker image for vulnerabilities using Trivy.
   params:
     - name: IMAGE
+      type: string
       description: The image reference to scan.
-      type: string
     - name: TRIVY_SEVERITY
-      description: Comma-separated list of severities to scan for.
       type: string
-      default: "CRITICAL,HIGH"
+      description: Comma-separated list of severities to scan for.
   steps:
-    - name: scan
+    - name: trivy-scan
       image: aquasec/trivy:latest
       script: |
         #!/bin/sh
